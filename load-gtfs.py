@@ -54,7 +54,7 @@ def main():
     extra_sql.append('update stops set the_geom = st_setsrid(st_point(stop_lon,stop_lat),4326);')
     for sql in extra_sql:
       try:
-        con.query
+        con.query(sql)
       except pg.ProgrammingError:
         pass
     os.system('cat ./schema/gtfs_schema.index.sql | psql -U %s -d %s -h %s' % (usr,db,hst))

@@ -119,6 +119,8 @@ CREATE TABLE stops (
     stop_url character varying,
     location_type integer,
     parent_station character varying,
+    --custom field for CTA
+    wheelchair_boarding varchar,
     the_geom geometry
 );
 
@@ -132,5 +134,8 @@ CREATE TABLE trips (
     trip_short_name character varying,
     direction_id integer,
     block_id character varying,
-    shape_id character varying
+    shape_id character varying,
+    --custom for CTA
+    wheelchair_accessible varchar,
+    direction varchar
 );
