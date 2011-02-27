@@ -2,10 +2,25 @@
 
 # Code based on https://github.com/sbma44/py-gtfs-mysql by user sbma44, modified for import to postgres instead of mysql.
 
-
+import sys
 import csv
 import pg
 import os
+
+#### Next step: get threading working.  These classes will be used eventually.
+
+import threading
+
+class queryThread(threading.Thread):
+    def __init__(self,connection,table,columns,data,agency):
+      self.connection = connection
+      self.table = table
+      self.columns = columns
+      self.data = data
+      self.agency = agency
+      threading.Thread.__init__(self)
+    def run(self):
+      insert_into_table(self.connection,self.table,self.columns,self.data,self.agency)
 
 def is_numeric(s):
     try:
@@ -17,17 +32,33 @@ def is_numeric(s):
         # numeric
         return True
 
+####
+
+def insert_into_table(connection,table,columns,data,agency):
+   
+    #print "con.query(\"INSERT INTO %s (%s,agency_id) VALUES (%s,'%s');\")" % (table,columns,data,agency)
+    #print threading.activeCount()
+    connection.query("INSERT INTO %s (%s,agency_id) VALUES (%s,'%s');" % (table,columns,data,agency))
+
+
+
 def main():
-    #INPUT - SHOULD BE PASSED AT COMMAND LINE
     #Note directory structure: ./gtfs/[agency] contains gtfs files, ./schema contains sql to create schema and build indexes
-    db = 'geo'
-    hst = 'localhost'
-    usr = 'gtfs2'
-    agency = 'CTA'
-    schema = 'gtfs2'
+    thread_list = [1,2,3,4,5,6,7,8]
+    db = sys.argv[1]
+    hst = sys.argv[2]
+    usr = sys.argv[3]
     con = pg.connect(dbname=db,host=hst,user=usr)
+    
+    agency = sys.argv[4]
+    schema = sys.argv[5]
+    
     #set up GTFS schema
-    con.query("DROP SCHEMA %s cascade; CREATE SCHEMA %s;" % (schema,schema))
+    try:
+      con.query("DROP SCHEMA %s cascade;" % schema)
+    except pg.ProgrammingError:
+      pass
+    con.query("CREATE SCHEMA %s;" % schema)
     os.system('cat ./schema/gtfs_schema.create.sql | psql -U %s -d %s -h %s' % (usr,db,hst))
     TABLES = ['agency', 'calendar', 'calendar_dates', 'fare_attributes','fare_rules','frequencies', 'routes', 'shapes','stop_times','stops','trips']
     #TABLES = ['agency','calendar','calendar_dates']
@@ -41,11 +72,17 @@ def main():
           for row in reader:
               insert_row = []
               for value in row:
-                  if not is_numeric(value):
+                  if value == '':
+                      insert_row.append('NULL')
+                  elif not is_numeric(value):
                       insert_row.append("'" + pg.escape_string(value) + "'")
                   else:
                       insert_row.append(value)
-              con.query("INSERT INTO %s (%s,agency_id) VALUES (%s,'%s');" % (table,','.join(columns),','.join(insert_row),agency))
+              #while threading.activeCount() > 10:
+              #    pass
+              #thread = queryThread(con,table,','.join(columns),','.join(insert_row),agency)
+              #thread.start() 
+              insert_into_table(con,table,','.join(columns),','.join(insert_row),agency)
         except IOError:
           print 'NOTICE: %s.txt not provided in feed.' % table
     # create new columns, indexes and constraints
