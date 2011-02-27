@@ -44,13 +44,16 @@ def insert_into_table(connection,table,columns,data,agency):
 
 def main():
     #Note directory structure: ./gtfs/[agency] contains gtfs files, ./schema contains sql to create schema and build indexes
-    db = sys.argv[1]
-    hst = sys.argv[2]
-    usr = sys.argv[3]
+    try:
+      db = sys.argv[1]
+      hst = sys.argv[2]
+      usr = sys.argv[3]
+      agency = sys.argv[4]
+      schema = sys.argv[5]
+    except IndexError:
+      print "Usage: python load-gtfs.py db hst usr agency schema"
+      sys.exit(1)
     con = pg.connect(dbname=db,host=hst,user=usr)
-    
-    agency = sys.argv[4]
-    schema = sys.argv[5]
     
     #set up GTFS schema
     try:
@@ -94,7 +97,7 @@ def main():
         con.query(sql)
       except pg.ProgrammingError:
         pass
-    os.system('cat ./schema/gtfs_schema.index.sql | psql -U %s -d %s -h %s -W %s' % (usr,db,hst,pwd))
+    os.system('cat ./schema/gtfs_schema.index.sql | psql -U %s -d %s -h %s' % (usr,db,hst))
 
 if __name__ == '__main__':
     main()
