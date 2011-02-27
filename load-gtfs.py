@@ -62,7 +62,7 @@ def main():
 
     TABLES = ['agency', 'calendar', 'calendar_dates', 'fare_attributes','fare_rules','frequencies', 'routes', 'shapes','stop_times','stops','trips']
     #TABLES = ['agency','calendar','calendar_dates']
-    for table in TABLES:
+    for table in TABLES:g
         try:
           f = open('gtfs/%s/%s.txt' % (agency,table), 'r')
           print 'processing %s' % table
