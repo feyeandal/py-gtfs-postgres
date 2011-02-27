@@ -38,13 +38,12 @@ def insert_into_table(connection,table,columns,data,agency):
    
     #print "con.query(\"INSERT INTO %s (%s,agency_id) VALUES (%s,'%s');\")" % (table,columns,data,agency)
     #print threading.activeCount()
-    connection.query("INSERT INTO %s (%s,agency_id) VALUES (%s,'%s');" % (table,columns,data,agency))
+    connection.query("INSERT INTO %s (%s,_agency_id) VALUES (%s,'%s');" % (table,columns,data,agency))
 
 
 
 def main():
     #Note directory structure: ./gtfs/[agency] contains gtfs files, ./schema contains sql to create schema and build indexes
-    thread_list = [1,2,3,4,5,6,7,8]
     db = sys.argv[1]
     hst = sys.argv[2]
     usr = sys.argv[3]
@@ -60,6 +59,7 @@ def main():
       pass
     con.query("CREATE SCHEMA %s;" % schema)
     os.system('cat ./schema/gtfs_schema.create.sql | psql -U %s -d %s -h %s' % (usr,db,hst))
+
     TABLES = ['agency', 'calendar', 'calendar_dates', 'fare_attributes','fare_rules','frequencies', 'routes', 'shapes','stop_times','stops','trips']
     #TABLES = ['agency','calendar','calendar_dates']
     for table in TABLES:
@@ -94,7 +94,7 @@ def main():
         con.query(sql)
       except pg.ProgrammingError:
         pass
-    os.system('cat ./schema/gtfs_schema.index.sql | psql -U %s -d %s -h %s' % (usr,db,hst))
+    os.system('cat ./schema/gtfs_schema.index.sql | psql -U %s -d %s -h %s -W %s' % (usr,db,hst,pwd))
 
 if __name__ == '__main__':
     main()

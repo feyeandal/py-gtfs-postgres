@@ -1,1 +1,14 @@
 Uses sample data from Chicago Transit Authority (CTA), downloaded on 1-30-2011.  Code should be modified for other database, sets of data.
+
+Make sure pg is installed for python
+
+cccta=# create schema gtfs;
+CREATE SCHEMA
+cccta=# create user gtfs superuser;
+CREATE ROLE
+cccta=#
+
+Update load-gtfs.py to agency name that matches the folder with the GTFS files in it - this will also be used as the agency ID
+
+Mapnik:
+select distinct _agency_id||coalesce(agency.agency_name,'')||b.description from routes join route_types b using (route_type) join agency using (_agency_id,agency_id);

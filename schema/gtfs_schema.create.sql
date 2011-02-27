@@ -13,7 +13,8 @@ INSERT INTO route_types VALUES (7,'funicular');
 
 
 CREATE TABLE agency (
-    agency_id character varying NOT NULL,
+    _agency_id character varying NOT NULL,
+    agency_id character varying,
     agency_name character varying NOT NULL,
     agency_url character varying NOT NULL,
     agency_timezone character varying NOT NULL,
@@ -23,7 +24,7 @@ CREATE TABLE agency (
 );
 
 CREATE TABLE calendar (
-    agency_id character varying NOT NULL,
+    _agency_id character varying NOT NULL,
     service_id character varying NOT NULL,
     monday integer NOT NULL,
     tuesday integer NOT NULL,
@@ -37,7 +38,7 @@ CREATE TABLE calendar (
 );
 
 CREATE TABLE calendar_dates (
-    agency_id character varying,
+    _agency_id character varying,
     service_id character varying NOT NULL,
     date character varying NOT NULL,
     exception_type character varying NOT NULL
@@ -45,7 +46,7 @@ CREATE TABLE calendar_dates (
 
 
 CREATE TABLE fare_attributes (
-    agency_id character varying NOT NULL,
+    _agency_id character varying NOT NULL,
     fare_id character varying NOT NULL,
     price character varying NOT NULL,
     currency_type character varying NOT NULL,
@@ -55,7 +56,7 @@ CREATE TABLE fare_attributes (
 );
 
 CREATE TABLE fare_rules (
-    agency_id character varying NOT NULL,
+    _agency_id character varying NOT NULL,
     fare_id character varying NOT NULL,
     route_id character varying,
     origin_id character varying,
@@ -64,7 +65,7 @@ CREATE TABLE fare_rules (
 );
 
 CREATE TABLE frequencies (
-    agency_id character varying NOT NULL,
+    _agency_id character varying NOT NULL,
     trip_id character varying NOT NULL,
     start_time character varying NOT NULL,
     end_time character varying NOT NULL,
@@ -73,7 +74,8 @@ CREATE TABLE frequencies (
 
 
 CREATE TABLE routes (
-    agency_id character varying NOT NULL,
+    _agency_id character varying NOT NULL,
+    agency_id character varying,
     route_id character varying NOT NULL,
     route_short_name character varying,
     route_long_name character varying NOT NULL,
@@ -85,7 +87,7 @@ CREATE TABLE routes (
 );
 
 CREATE TABLE shapes (
-    agency_id character varying NOT NULL,
+    _agency_id character varying NOT NULL,
     shape_id character varying NOT NULL,
     shape_pt_lat double precision NOT NULL,
     shape_pt_lon double precision NOT NULL,
@@ -95,7 +97,7 @@ CREATE TABLE shapes (
 );
 
 CREATE TABLE stop_times (
-    agency_id character varying NOT NULL,
+    _agency_id character varying NOT NULL,
     trip_id character varying NOT NULL,
     arrival_time character varying NOT NULL,
     departure_time character varying NOT NULL,
@@ -108,7 +110,7 @@ CREATE TABLE stop_times (
 );
 
 CREATE TABLE stops (
-    agency_id character varying NOT NULL,
+    _agency_id character varying NOT NULL,
     stop_id character varying NOT NULL,
     stop_code character varying,
     stop_name character varying NOT NULL,
@@ -126,7 +128,7 @@ CREATE TABLE stops (
 
 
 CREATE TABLE trips (
-    agency_id character varying NOT NULL,
+    _agency_id character varying NOT NULL,
     route_id character varying NOT NULL,
     service_id character varying NOT NULL,
     trip_id character varying NOT NULL,
